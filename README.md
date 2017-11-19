@@ -1,5 +1,5 @@
 ## Homey app for Vanderbilt SPC Intrusion System
-This app integrates Homey with Vanderbilt SPC intrusion system. The app allows you to use all your SPC connected motion detectors, door/window contacts, fire detectors and alarm status for control of other devices connected to home, e.g lights, water valves and blinds. It is also support for arming/disarming the SPC system (if allowed in the SPC configuration).
+This app integrates Homey with Vanderbilt SPC intrusion system. The app allows you to use all your SPC connected motion detectors, door/window contacts, fire detectors and alarm status for control of other devices connected to Homey, e.g lights, water valves and blinds. It has also support for arming/disarming the SPC system manually or via Flows (if allowed in the SPC configuration).
 
 ## Hardware
 ### Supported panels
@@ -10,7 +10,7 @@ In order for this application to communicate with the SPC panel, you need a SPC 
 
 ## Application
 ### Adding panel device
-First add an Alarm Panel device. The app supports only one single Alarm panel. NOTE! Be sure that the SPC Bridge is configured and working before you try to add the Alarm Panel device to Homey.
+First add an Alarm Panel device. The app supports only one single Alarm panel. **NOTE!** Be sure that the SPC Bridge is configured and working properly before you try to add the Alarm Panel device to Homey.
 
 #### SPC Bridge communication settings
 In the first Panel adding screen you need to specify the SPC Bridge communication settings, to be able to connect to the SPC panel:
@@ -21,22 +21,22 @@ In the first Panel adding screen you need to specify the SPC Bridge communicatio
 * **Username and Password Events (WS)**. Username and password for websockets events from SPC Bridge. Default username is ws_user and password ws_pwd.
 
 #### Panel information
-If communication with the SPC Bridge (and the SPC Panel) was successfully established, a screen with some Panel Information, e.g panel type, model and serial number is shown. The screen is also listing the SPC zones with names and types.
+If Homey succeeded to establish a connection to the SPC Bridge (and the SPC Panel), a screen with some Panel Information, e.g panel type, model and serial number is shown. The screen is also listing the SPC zones with names and types.
 
-Click the **Add panel** button to add the Panel device to Homey.
+Click the **Add panel** button to complete the adding sequence.
 
 ### Adding alarm area devices
 After you have added the Panel device you can optionally add a *virtual* device for each Alarm Area defined in the SPC system. You need to do this if you would like to use area arm modes and alarm states as triggers, conditions or actions in Homey Flows.
 
 ### Adding sensor devices
-After you have added the Panel device you can also add a device for each alarm zone (input) defined in the SPC system, that you would like to use in Homey. You can sort the zones in follwing categories:
+After you have added the Panel device you can also add a device for each alarm zone (input) defined in the SPC system. You can assign the zones follwing categories:
 
 * Door Sensor
 * Window Sensor
 * Motion Sensor
 * Smoke Detector
 
-Zones defined in SPC of type **fire** are only selectable as **Smoke Detector**. Other zone types can be added either as door, window or motion sensors.
+Zones that are of type **fire** in SPC are only selectable as **Smoke Detector**. Other zone types can be added either as door, window or motion sensors.
 
 ### Device control and Flows
 When it is allowed in the SPC Panel configuration, it is possible to fullset (arm), partset A, partset B or unset (disarm) the panel or area. This can be done either via a Flow, or directly via the device control. Arm modes, alarm states, zone states and status are also possible to use as triggers and conditions in Flows .
