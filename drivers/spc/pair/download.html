@@ -1,0 +1,120 @@
+<!--
+
+NOTE: We inherit everything from the previous page. So we re-use those styles & use message(Content)2.
+
+-->
+<script type="application/javascript">
+    var msgPromise;
+    var device;
+
+    // Display message to the user
+    function displayMessage(text, remove) {
+        if (msgPromise != null) {
+            clearTimeout(msgPromise);
+        }
+        $('#messageContent2').text(text);
+        $('#message2').slideDown();
+        if (remove) {
+            msgPromise = setTimeout(function() {
+                $('#messageContent2').text('');
+                $('#message2').slideUp();
+            }, 5000);
+        }
+    }
+
+    // Add the device when the user gives the OK
+    function addDevice() {
+        Homey.addDevice(device, function(err, result) {
+            if (err) {
+                Homey.done();  // Ignore already added message
+            } else {
+                Homey.emit('completed', device, function(err, result) {
+                    if (err) {
+                       displayMessage(__('pair.connection_error'), false);
+                    } else {
+                       Homey.done();
+                    }
+                });
+            }
+        });
+    }
+
+    Homey.setTitle(__('pair.download.name'));
+
+    Homey.on("download", function(data) {
+        if (data.state == 'enroll' || data.state == 'failed') {
+            displayMessage(__('pair.download.wait'), false);
+        } else if (data.state.slice(0, 8) == 'received') {
+            var content = __('pair.download.receive') + data.state.slice(9);
+            $('#received').text(content);
+        } else { // start (= downloading info) or 'process:...'
+            displayMessage(__('pair.download.download'), false);
+            $('#table').show();
+            // Display panel info
+            var tableBody = $('<tr><td class="label">Panel Type:</td><td>' + data.device.settings.type + '</td></tr>' +
+                '<tr><td class="label">Panel Model:</td><td>' + data.device.settings.model + '</td></tr>' +
+                '<tr><td class="label">Serial Number:</td><td>' + data.device.settings.serial + '</td></tr>' +
+                '<tr><td class="label">Software Version:</td><td>' + data.device.settings.firmware + '</td></tr>');
+            tableBody.appendTo('#info_table_body');
+            // Display zone items
+            for (var i in data.show['headers']) {
+                var header = data.show['headers'][i];
+                var newItem = $('<th>' + header + '</th>');
+                newItem.appendTo('#config_table_header');
+            }
+            for (var i in data.show['rows']) {
+                var row = data.show['rows'][i];
+                var newRow = $('<tr></tr>');
+                for (var j in row) {
+                    var newItem = $('<td>' + row[j] + '</td>');
+                    newItem.appendTo(newRow);
+                }
+                newRow.appendTo('#config_table_body');
+            }
+        }
+        if (data.state == 'done') {
+            displayMessage(__('pair.download.complete'), false);
+            $('#add_button').show();
+            $('#received').hide();
+            device = data.device;
+        }
+    });
+</script>
+
+<style>
+    table th {
+        padding: 1px 10px;
+        font-weight: bold;
+    }
+
+    table td {
+        padding: 1px 10px;
+    }
+
+    table td .label {
+        font-weight: bold;
+    }
+</style>
+
+<div id="all">
+    <fieldset id="message2" class="message">
+        <legend>Message</legend>
+        <div id="messageContent2" class="message-bar">
+        </div>
+    </fieldset>
+    <fieldset id="info">
+        <legend data-i18n="pair.download.info"></legend>
+        <table id="info_table">
+            <tbody id="info_table_body"></tbody>
+        </table>
+    </fieldset>
+    <fieldset id="table">
+        <legend data-i18n="pair.download.zones"></legend>
+        <table id="config_table">
+            <thead id="config_table_header"></thead>
+            <tbody id="config_table_body"></tbody>
+        </table>
+        <div id="received"></div>
+    </fieldset>
+    <button type="submit" id="add_button" class="button" data-i18n="pair.panel.add" onClick="javascript:addDevice()" style="display:none"></button>
+</div>

@@ -1,0 +1,65 @@
+{
+  "pair": {
+		"panel": {
+			"name": "SPC Bridge Settings",
+			"explain": "This application can connect to a Vanderbilt SPC panel using a SPC Bridge from Lundix IT, www.lundix.se. Please specify the bridge communication settings below. Before you proceedi, please be sure that the SPC Bridge is configured and working properly.",
+			"network": {
+				"title": "SPC Bridge Settings"
+      },
+			"submit": "Next",
+			"parameter_error": "Invalid parameters. One or more fields are empty.",
+     			"search": {
+                                "title": "Searching for SPC Bridge on __addr__...",
+                                "success": "Found your SPC Bridge. Device will be added.",
+                                "failed": "Unable to connect to the SPC Bridge on __addr__!"
+                        },
+			"add": "Add panel"
+		},
+		"download": {
+			"name": "Panel Information",
+			"explain": "In order for the application to be able to find all panel information, the SPC Bridge will need to be configured and working.",
+			"wait": "Waiting for operation to complete...",
+			"download": "Downloading panel information... Please wait...",
+			"complete": "Import of SPC configuration succeded. Click on the pushbutton to add the panel.",
+			"info": "Panel information",
+			"zones": "Zone information",
+			"receive": "Receiving panel settings: "
+		},
+		"add_panel": "Please add the alarm panel first before adding something else.",
+		"not_allowed": "Not allowed to add",
+		"connection_error": "Connection to SPC Bridge failed. Unable to add panel",
+		"area": {
+			"name": "Add Vanderbilt SPC Alarm Area",
+			"title": "Alarm Area"
+		},
+		"contact": {
+			"name": "Add Vanderbilt SPC door/window sensor",
+			"title": "Panel"
+		},
+		"motion": {
+			"name": "Add Vanderbilt SPC motion sensor",
+			"title": "Panel"
+		},
+		"smoke": {
+			"name": "Add Vanderbilt SPC smoke detector",
+			"title": "Panel"
+		}
+	},
+	"error": {
+		"no_panel": "Panel not available",
+		"invalid_panel": "Panel __panel__ does not exist!",
+		"already_present": "Panel __panel__ already exists!",
+		"unreachable": "Communication lost since __time__",
+		"sensor_removed": "The sensor is removed."
+	},
+	"settings": {
+		"title": "Vanderbilt SPC",
+		"button_areas": "SPC Areas",
+		"button_zones": "SPC Zones",
+		"button_syslog": "SPC System log",
+		"subtitle_areas": "SPC Areas",
+		"subtitle_zones": "SPC Zones",
+		"subtitle_syslog": "SPC System log",
+		"pairing_needed": "You need to add the SPC Panel to Homey first"
+	}
+}

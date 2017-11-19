@@ -1,0 +1,141 @@
+<style>
+    form {
+        overflow: hidden;
+    }
+
+    .message {
+        background: #f8f8f8;
+        display: none;
+    }
+
+    .message-bar {
+        font-style: italic;
+        font-weight: bolder;
+    }
+
+    .oneline {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .label {
+        float: left;
+        width: 220px;
+        padding-right: 24px;
+        color: #8c8c8c;
+        font-weight: bold;
+    }
+
+    .input {
+        float: left;
+        margin: 10px;
+        width: 200px;
+    }
+
+    .network .ng-invalid {
+        border: 1px solid red;
+    }
+</style>
+<script type="application/javascript">
+    var timeout;
+    var msgPromise;
+
+    // Display message to the user
+    function displayMessage(text, remove) {
+        if (msgPromise != null) {
+            clearTimeout(msgPromise);
+        }
+        $('#messageContent').text(text);
+        $('#message').slideDown();
+        if (remove) {
+            msgPromise = setTimeout(function() {
+                $('#messageContent').text('');
+                $('#message').slideUp();
+            }, 5000);
+        }
+    }
+
+    Homey.setTitle(__('pair.panel.name'));
+
+    // Save and search for SPC Bridge
+    var  address = '';
+    function spcNetworkSave(form) {
+        var data = {
+            bridge_ip:    $('#bridgeIp').val(),
+            bridge_port:  Number($('#bridgePort').val()),
+            get_user:     $('#usernameGet').val(),
+            get_password: $('#passwordGet').val(),
+            put_user:     $('#usernamePut').val(),
+            put_password: $('#passwordPut').val(),
+            ws_user:      $('#usernameWs').val(),
+            ws_password:  $('#passwordWs').val()
+        };
+        if (data.bridge_ip.length == 0 || data.bridge_port == 0 || data.get_user.length == 0 || data.get_password.length == 0 || 
+            data.put_user.length == 0 || data.put_password.length == 0 || data.ws_user.length == 0 || data.ws_password.lenght == 0) {
+
+            displayMessage(__('pair.panel.parameter_error'), false);
+            return;
+        }
+        address = data.bridge_ip + ':' + data.bridge_port;
+        displayMessage(__('pair.panel.search.title', {
+            addr: address
+        }), false);
+
+        Homey.emit('search', data, function(err, ok) {});
+    }
+
+    Homey.on("found", function(data) {
+        if (data.found) {
+            Homey.showView('download');
+        } else {
+            displayMessage(__('pair.panel.search.failed', {
+                addr: address
+            }), false);
+        }
+    });
+</script>
+
+<p data-i18n="pair.panel.explain"></p>
+<fieldset id="message" class="message">
+    <legend>Message</legend>
+    <div id="messageContent" class="message-bar"></div>
+</fieldset>
+<form name="networkForm" class="network" action="javascript: spcNetworkSave(networkForm)">
+    <fieldset>
+        <legend data-i18n="pair.panel.network.title"></legend>
+        <div class="oneline">
+            <label for="bridgeIp" class="label">SPC Bridge IP</label>
+            <input type="text" class="input" id="bridgeIp" value="" placeholder="X.X.X.X">
+        </div>
+        <div class="oneline">
+            <label for="bridgePort" class="label">SPC Bridge Port</label>
+            <input type="text" class="input" id="bridgePort" value="8088" placeholder="portnumber">
+        </div>
+        <div class="oneline">
+            <label for="usernameGet" class="label">Username Queries (GET)</label>
+            <input type="text" class="input" id="usernameGet" value="get_user" placeholder="username">
+        </div>
+        <div class="oneline">
+            <label for="passwordGet" class="label">Password Queries (GET)</label>
+            <input type="password" class="input" id="passwordGet" value="get_pwd">
+        </div>
+        <div class="oneline">
+            <label for="usernamePut" class="label">Username Commands (PUT)</label>
+            <input type="text" class="input" id="usernamePut" value="put_user" placeholder="username">
+        </div>
+        <div class="oneline">
+            <label for="passwordPut" class="label">Password Commands (PUT)</label>
+            <input type="password" class="input" id="passwordPut" value="put_pwd">
+        </div>
+        <div class="oneline">
+            <label for="usernameWs" class="label">Username Events (WS)</label>
+            <input type="text" class="input" id="usernameWs" value="ws_user" placeholder="username">
+        </div>
+        <div class="oneline">
+            <label for="passwordWs" class="label">Password Events (WS)</label>
+            <input type="password" class="input" id="passwordWs" value="ws_pwd">
+        </div>
+    </fieldset>
+    <p></p>
+    <button type="submit" id="search_button" class="button" data-i18n="pair.panel.submit"></button>
+</form>

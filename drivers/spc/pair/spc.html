@@ -1,0 +1,22 @@
+<div id="all">
+    <fieldset>
+        <div id="panelList"></div>
+    </fieldset>
+</div>
+<script>
+    function isPanelAlreadyAdded(title) {
+        $('#all').hide();
+        Homey.on('start', function(panels) {
+            if (panels.length >= 1) {
+                Homey.setTitle('Pairing not allowed');
+                $('#panelList').text('A panel with id ' + panels[0].id + ' is already paired. Only one panel is supported.');
+                $('#all').show();
+            } else {
+                Homey.showView('spc_settings');
+            }
+        });
+        Homey.emit('loaded');
+    }
+    isPanelAlreadyAdded();
+
+</script>

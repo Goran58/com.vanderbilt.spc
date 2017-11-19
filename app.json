@@ -1,0 +1,2921 @@
+{
+    "id": "com.vanderbilt.spc",
+    "sdk": 2,
+    "name": {
+        "en": "Vanderbilt SPC Intrusion Detection System"
+    },
+    "tags": {
+        "en": ["Vanderbilt SPC Intrusion Detection System Alarm Security"]
+    },
+    "version": "1.0.1",
+    "compatibility": ">=1.0.0",
+    "description": {
+        "en": "Integrates Vanderbilt SPC Intrusion Detection System with Homey"
+    },
+    "author": {
+        "name": "Goran Lundquist, Lundix IT",
+        "website": "http://www.lundix.se/smarta-losningar"
+    },
+    "category": "security",
+    "images": {
+        "large": "assets/images/large.jpg",
+        "small": "assets/images/small.jpg"
+    },
+    "capabilities": {
+        "alarm_unset": {
+            "type": "boolean",
+            "title": {
+                "en": "Unset"
+            },
+            "getable": false,
+            "setable": true
+        },
+        "alarm_partset_a": {
+            "type": "boolean",
+            "title": {
+                "en": "Partset A"
+            },
+            "getable": false,
+            "setable": true
+        },
+        "alarm_partset_b": {
+            "type": "boolean",
+            "title": {
+                "en": "Partset B"
+            },
+            "getable": false,
+            "setable": true
+        },
+        "alarm_fullset": {
+            "type": "boolean",
+            "title": {
+                "en": "Set"
+            },
+            "getable": false,
+            "setable": true
+        },
+        "arm_mode": {
+            "type": "string",
+            "title": {
+                "en": "Arm mode"
+            },
+            "getable": true,
+            "setable": false
+        },
+        "alarm": {
+            "type": "boolean",
+            "title": {
+                "en": "Alarm"
+            },
+            "getable": true,
+            "setable": false
+        },
+        "zone_alarm": {
+            "type": "boolean",
+            "title": {
+                "en": "Zone alarm"
+            },
+            "getable": true,
+            "setable": false
+        },
+        "zone_state": {
+            "type": "string",
+            "title": {
+                "en": "Input state"
+            },
+            "getable": true,
+            "setable": false
+        },
+        "zone_status": {
+            "type": "string",
+            "title": {
+                "en": "Input status"
+            },
+            "getable": true,
+            "setable": false
+        }
+    },
+    "drivers": [{
+            "id": "spc",
+            "name": {
+                "en": "Alarm Panel"
+            },
+            "class": "homealarm",
+            "capabilities": ["arm_mode", "alarm", "alarm_unset", "alarm_fullset", "alarm_partset_a", "alarm_partset_b"],
+            "capabilitiesOptions": {
+                "alarm_unset": {
+                    "title": {
+                        "en": "Unset all areas"
+                    }
+                },
+                "alarm_fullset": {
+                    "title": {
+                        "en": "Fullset all areas"
+                    }
+                },
+                "alarm_partset_a": {
+                    "title": {
+                        "en": "Partset A all areas"
+                    }
+                },
+                "alarm_partset_b": {
+                    "title": {
+                        "en": "Partset B all areas"
+                    }
+                }
+            },
+            "mobile": {
+                "components": [{
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "button",
+                        "capabilities": ["alarm_unset",  "alarm_fullset", "alarm_partset_a", "alarm_partset_b"],
+                        "options": {
+                            "icons": {
+                                "alarm_unset": "./drivers/spc/assets/disarmed.svg",
+                                "alarm_fullset": "./drivers/spc/assets/armed.svg",
+                                "alarm_partset_a": "./drivers/spc/assets/armed_a.svg",
+                                "alarm_partset_b": "./drivers/spc/assets/armed_b.svg"
+                            }
+                        }
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["arm_mode", "alarm"],
+                        "options": {
+                            "icons": {
+                                "arm_mode": "./drivers/spc/assets/arm_mode.svg",
+                                "alarm": "./drivers/spc/assets/alarm.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/spc/assets/images/large.jpg",
+                "small": "drivers/spc/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "spc"
+                },
+                {
+                    "id": "spc_settings"
+                },
+                {
+                    "id": "download"
+                }
+            ],
+            "settings": [{
+                    "type": "group",
+                    "label": {
+                        "en": "Panel information"
+                    },
+                    "children": [{
+                            "id": "type",
+                            "type": "label",
+                            "label": {
+                                "en": "Panel type"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "model",
+                            "type": "label",
+                            "label": {
+                                "en": "Panel model"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "serial",
+                            "type": "label",
+                            "label": {
+                                "en": "Serial number"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "firmware",
+                            "type": "label",
+                            "label": {
+                                "en": "Firmware version"
+                            },
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "label": {
+                        "en": "SPC Bridge settings"
+                    },
+                    "children": [{
+                            "id": "bridge_ip",
+                            "type": "text",
+                            "label": {
+                                "en": "SPC Bridge IP"
+                            },
+                            "value": "0.0.0.0"
+                        },
+                        {
+                            "id": "bridge_port",
+                            "type": "number",
+                            "label": {
+                                "en": "SPC Bridge Port"
+                            },
+                            "value": 0,
+                            "attr": {
+                                "min": 0,
+                                "max": 65535
+                            }
+                        },
+                        {
+                            "id": "get_user",
+                            "type": "text",
+                            "label": {
+                                "en": "Username Queries (GET)"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "get_password",
+                            "type": "password",
+                            "label": {
+                                "en": "Password Queries (GET)"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "put_user",
+                            "type": "text",
+                            "label": {
+                                "en": "Username Commands (PUT)"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "put_password",
+                            "type": "password",
+                            "label": {
+                                "en": "Password Commands (GET)"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "ws_user",
+                            "type": "text",
+                            "label": {
+                                "en": "Username Events (WS)"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "ws_password",
+                            "type": "password",
+                            "label": {
+                                "en": "Password Events (WS)"
+                            },
+                            "value": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "area",
+            "name": {
+                "en": "Alarm Area"
+            },
+            "class": "homealarm",
+            "capabilities": ["arm_mode", "alarm", "alarm_unset",  "alarm_partset_a",  "alarm_partset_b",  "alarm_fullset"],
+            "capabilitiesOptions": {
+                "alarm_unset": {
+                    "title": {
+                        "en": "Unset area"
+                    }
+                },
+                "alarm_fullset": {
+                    "title": {
+                        "en": "Fullset area"
+                    }
+                },
+                "alarm_partset_a": {
+                    "title": {
+                        "en": "Partset A area"
+                    }
+                },
+                "alarm_partset_b": {
+                    "title": {
+                        "en": "Partset B area"
+                    }
+                }
+            },
+            "mobile": {
+                "components": [{
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "button",
+                        "capabilities": ["alarm_unset",  "alarm_fullset", "alarm_partset_a",  "alarm_partset_b"],
+                        "options": {
+                            "icons": {
+                                "alarm_unset": "./drivers/spc/assets/disarmed.svg",
+                                "alarm_fullset": "./drivers/spc/assets/armed.svg",
+                                "alarm_partset_a": "./drivers/spc/assets/armed_a.svg",
+                                "alarm_partset_b": "./drivers/spc/assets/armed_b.svg"
+                            }
+                        }
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["arm_mode", "alarm"],
+                        "options": {
+                            "icons": {
+                                "arm_mode": "./drivers/spc/assets/arm_mode.svg",
+                                "alarm": "./drivers/spc/assets/alarm.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/area/assets/images/large.jpg",
+                "small": "drivers/area/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "select",
+                    "navigation": {
+                        "next": "list_devices"
+                    }
+                },
+                {
+                    "id": "list_devices",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_area"
+                    }
+                },
+                {
+                    "id": "add_area",
+                    "template": "add_devices"
+                }
+            ],
+            "settings": [{
+                "type": "group",
+                "label": {
+                    "en": "Area events"
+                },
+                "children": [{
+                    "id": "status",
+                    "type": "label",
+                    "label": {
+                        "en": "Last alarm"
+                    },
+                    "value": ""
+                },
+                {
+                    "id": "alarm",
+                    "type": "label",
+                    "label": {
+                        "en": "Last mode change"
+                    },
+                    "value": ""
+                }]
+            },
+            {
+                "type": "group",
+                "label": {
+                    "en": "Area information"
+                },
+                "children": [{
+                    "id": "name",
+                    "type": "label",
+                    "label": {
+                        "en": "Area name"
+                    },
+                    "value": ""
+                },
+                {
+                    "id": "area",
+                    "type": "label",
+                    "label": {
+                        "en": "Area number"
+                    },
+                    "value": ""
+                }]
+            }]
+        },
+        {
+            "id": "door",
+            "name": {
+                "en": "Door Sensor"
+            },
+            "class": "sensor",
+            "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+            "mobile": {
+                "components": [
+                    {
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+                        "options": {
+                            "icons": {
+                                "zone_alarm": "./drivers/spc/assets/alarm.svg",
+                                "zone_state": "./drivers/spc/assets/zone_state.svg",
+                                "zone_status": "./drivers/spc/assets/zone_status.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/door/assets/images/large.jpg",
+                "small": "drivers/door/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "select",
+                    "navigation": {
+                        "next": "list_devices"
+                    }
+                },
+                {
+                    "id": "list_devices",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_sensors"
+                    }
+                },
+                {
+                    "id": "add_sensors",
+                    "template": "add_devices"
+                }
+            ],
+            "settings": [{
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor events"
+                    },
+                    "children": [{
+                            "id": "state",
+                            "type": "label",
+                            "label": {
+                                "en": "Last door event"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "status",
+                            "type": "label",
+                            "label": {
+                                "en": "Last door alarm"
+                            },
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor information"
+                    },
+                    "children": [{
+                            "id": "name",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone name"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "zone",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone number"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "type",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone type"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "area",
+                            "type": "label",
+                            "label": {
+                                "en": "Area"
+                            },
+                            "value": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "window",
+            "name": {
+                "en": "Window Sensor"
+            },
+            "class": "sensor",
+            "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+            "mobile": {
+                "components": [
+                    {
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+                        "options": {
+                            "icons": {
+                                "zone_alarm": "./drivers/spc/assets/alarm.svg",
+                                "zone_state": "./drivers/spc/assets/zone_state.svg",
+                                "zone_status": "./drivers/spc/assets/zone_status.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/window/assets/images/large.jpg",
+                "small": "drivers/window/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "select",
+                    "navigation": {
+                        "next": "list_devices"
+                    }
+                },
+                {
+                    "id": "list_devices",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_sensors"
+                    }
+                },
+                {
+                    "id": "add_sensors",
+                    "template": "add_devices"
+                }
+            ],
+            "settings": [{
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor events"
+                    },
+                    "children": [{
+                            "id": "state",
+                            "type": "label",
+                            "label": {
+                                "en": "Last window event"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "status",
+                            "type": "label",
+                            "label": {
+                                "en": "Last window alarm"
+                            },
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor information"
+                    },
+                    "children": [{
+                            "id": "name",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone name"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "zone",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone number"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "type",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone type"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "area",
+                            "type": "label",
+                            "label": {
+                                "en": "Area"
+                            },
+                            "value": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "motion",
+            "name": {
+                "en": "Motion Sensor"
+            },
+            "class": "sensor",
+            "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+            "mobile": {
+                "components": [
+                    {
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+                        "options": {
+                            "icons": {
+                                "zone_alarm": "./drivers/spc/assets/alarm.svg",
+                                "zone_state": "./drivers/spc/assets/zone_state.svg",
+                                "zone_status": "./drivers/spc/assets/zone_status.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/motion/assets/images/large.jpg",
+                "small": "drivers/motion/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "select",
+                    "navigation": {
+                        "next": "list_devices"
+                    }
+                },
+                {
+                    "id": "list_devices",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_sensors"
+                    }
+                },
+                {
+                    "id": "add_sensors",
+                    "template": "add_devices"
+                }
+            ],
+            "settings": [{
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor events"
+                    },
+                    "children": [{
+                            "id": "state",
+                            "type": "label",
+                            "label": {
+                                "en": "Last motion detect"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "status",
+                            "type": "label",
+                            "label": {
+                                "en": "Last motion alarm"
+                            },
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor information"
+                    },
+                    "children": [{
+                            "id": "name",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone name"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "zone",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone number"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "type",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone type"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "area",
+                            "type": "label",
+                            "label": {
+                                "en": "Area"
+                            },
+                            "value": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "smoke",
+            "name": {
+                "en": "Smoke Detector"
+            },
+            "class": "sensor",
+            "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+            "mobile": {
+                "components": [
+                    {
+                        "id": "icon",
+                        "capabilities": []
+                    },
+                    {
+                        "id": "sensor",
+                        "capabilities": ["zone_alarm", "zone_state", "zone_status"],
+                        "options": {
+                            "icons": {
+                                "zone_alarm": "./drivers/spc/assets/alarm.svg",
+                                "zone_state": "./drivers/spc/assets/zone_state.svg",
+                                "zone_status": "./drivers/spc/assets/zone_status.svg"
+                            }
+                        }
+                    }
+                ]
+            },
+            "images": {
+                "large": "drivers/smoke/assets/images/large.jpg",
+                "small": "drivers/smoke/assets/images/small.jpg"
+            },
+            "pair": [{
+                    "id": "select",
+                    "navigation": {
+                        "next": "list_devices"
+                    }
+                },
+                {
+                    "id": "list_devices",
+                    "template": "list_devices",
+                    "navigation": {
+                        "next": "add_sensors"
+                    }
+                },
+                {
+                    "id": "add_sensors",
+                    "template": "add_devices"
+                }
+            ],
+            "settings": [{
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor events"
+                    },
+                    "children": [{
+                            "id": "state",
+                            "type": "label",
+                            "label": {
+                                "en": "Last smoke event"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "status",
+                            "type": "label",
+                            "label": {
+                                "en": "Last smoke alarm"
+                            },
+                            "value": ""
+                        }
+                    ]
+                },
+                {
+                    "type": "group",
+                    "label": {
+                        "en": "Sensor information"
+                    },
+                    "children": [{
+                            "id": "name",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone name"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "zone",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone number"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "type",
+                            "type": "label",
+                            "label": {
+                                "en": "Zone type"
+                            },
+                            "value": ""
+                        },
+                        {
+                            "id": "area",
+                            "type": "label",
+                            "label": {
+                                "en": "Area"
+                            },
+                            "value": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "flow": {
+        "triggers": [
+            {
+                "id": "panel_alarm_on",
+                "title": {
+                    "en": "Alarm turned on (burglary, fire, soak, tamper or trouble)"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    }
+                ]
+            },
+            {
+                "id": "panel_alarm_off",
+                "title": {
+                    "en": "Alarm turned off (burglary, fire, soak, tamper or trouble)"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    }
+                ]
+            },
+            {
+                "id": "panel_mode_to",
+                "title": {
+                    "en": "Panel mode changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "All areas unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "All areas partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "All areas partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "All areas full set"
+                                }
+                            },
+                            {
+                                "id": "99",
+                                "label": {
+                                    "en": "Areas partly set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "panel_mode_from",
+                "title": {
+                    "en": "Panel mode changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "All areas unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "All areas partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "All areas partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "All areas full set"
+                                }
+                            },
+                            {
+                                "id": "99",
+                                "label": {
+                                    "en": "Areas partly set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "area_alarm_on",
+                "title": {
+                    "en": "Area alarm turned on (burglary, fire, soak, tamper or trouble)"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    }
+                ]
+            },
+            {
+                "id": "area_alarm_off",
+                "title": {
+                    "en": "Area alarm turned off (burglary, fire, soak, tamper or trouble)"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    }
+                ]
+            },
+            {
+                "id": "area_mode_to",
+                "title": {
+                    "en": "Area mode changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "area_mode_from",
+                "title": {
+                    "en": "Area mode changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_alarm_on",
+                "title": {
+                    "en": "Door alarm turned on"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_alarm_off",
+                "title": {
+                    "en": "Door alarm turned off"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_state_to",
+                "title": {
+                    "en": "Zone state changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_state_from",
+                "title": {
+                    "en": "Zone state changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_status_to",
+                "title": {
+                    "en": "Zone status changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_status_from",
+                "title": {
+                    "en": "Zone status changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_alarm_on",
+                "title": {
+                    "en": "Window alarm turned on"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_alarm_off",
+                "title": {
+                    "en": "Window alarm turned off"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_state_to",
+                "title": {
+                    "en": "Zone state changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_state_from",
+                "title": {
+                    "en": "Zone state changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_status_to",
+                "title": {
+                    "en": "Zone status changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_status_from",
+                "title": {
+                    "en": "Zone status changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_alarm_on",
+                "title": {
+                    "en": "Motion alarm turned on"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_alarm_off",
+                "title": {
+                    "en": "Motion alarm turned off"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_state_to",
+                "title": {
+                    "en": "Zone state changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_state_from",
+                "title": {
+                    "en": "Zone state changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_status_to",
+                "title": {
+                    "en": "Zone status changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_status_from",
+                "title": {
+                    "en": "Zone status changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_alarm_on",
+                "title": {
+                    "en": "Smoke alarm turned on"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_alarm_off",
+                "title": {
+                    "en": "Smoke alarm turned off"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_state_to",
+                "title": {
+                    "en": "Zone state changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_state_from",
+                "title": {
+                    "en": "Zone state changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_status_to",
+                "title": {
+                    "en": "Zone status changes to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_status_from",
+                "title": {
+                    "en": "Zone status changes from"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "conditions": [
+            {
+                "id": "panel_alarm_is",
+                "title": {
+                    "en": "Alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=spc"
+                }]
+            },
+            {
+                "id": "panel_mode_is",
+                "title": {
+                    "en": "Panel mode !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "All areas unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "All areas partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "All areas partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "All areas full set"
+                                }
+                            },
+                            {
+                                "id": "99",
+                                "label": {
+                                    "en": "Areas partly set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "area_alarm_is",
+                "title": {
+                    "en": "Area alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=area"
+                }]
+            },
+            {
+                "id": "area_mode_is",
+                "title": {
+                    "en": "Area mode !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_alarm_is",
+                "title": {
+                    "en": "Door alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=door"
+                }]
+            },
+            {
+                "id": "zone_door_state_is",
+                "title": {
+                    "en": "Zone state !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_door_status_is",
+                "title": {
+                    "en": "Zone status !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=door"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_alarm_is",
+                "title": {
+                    "en": "Motion alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=motion"
+                }]
+            },
+            {
+                "id": "zone_motion_state_is",
+                "title": {
+                    "en": "Zone state !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_motion_status_is",
+                "title": {
+                    "en": "Zone status !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=motion"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_alarm_is",
+                "title": {
+                    "en": "Smoke alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=smoke"
+                }]
+            },
+            {
+                "id": "zone_smoke_state_is",
+                "title": {
+                    "en": "Zone state !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_smoke_status_is",
+                "title": {
+                    "en": "Zone status !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=smoke"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_alarm_is",
+                "title": {
+                    "en": "Window alarm !{{is|is not}} on"
+                },
+                "args": [{
+                    "name": "device",
+                    "type": "device",
+                    "filter": "driver_id=window"
+                }]
+            },
+            {
+                "id": "zone_window_state_is",
+                "title": {
+                    "en": "Zone state !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Closed"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Open"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Short"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Disconnected"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "PIR Masked"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "DC Substitution"
+                                }
+                            },
+                            {
+                                "id": "6",
+                                "label": {
+                                    "en": "Sensor Missing"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Offline"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "zone_window_status_is",
+                "title": {
+                    "en": "Zone status !{{is|is not}}"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=window"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "OK"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Inhibit"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Isolate"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Soak"
+                                }
+                            },
+                            {
+                                "id": "4",
+                                "label": {
+                                    "en": "Tamper"
+                                }
+                            },
+                            {
+                                "id": "5",
+                                "label": {
+                                    "en": "Alarm"
+                                }
+                            },
+                            {
+                                "id": "7",
+                                "label": {
+                                    "en": "Trouble"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "actions": [
+            {
+                "id": "panel_mode_action",
+                "title": {
+                    "en": "Change all areas to mode"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=spc"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "area_mode_action",
+                "title": {
+                    "en": "Change area mode to"
+                },
+                "args": [{
+                        "name": "device",
+                        "type": "device",
+                        "filter": "driver_id=area"
+                    },
+                    {
+                        "name": "values",
+                        "type": "dropdown",
+                        "values": [{
+                                "id": "0",
+                                "label": {
+                                    "en": "Unset"
+                                }
+                            },
+                            {
+                                "id": "1",
+                                "label": {
+                                    "en": "Partset A"
+                                }
+                            },
+                            {
+                                "id": "2",
+                                "label": {
+                                    "en": "Partset B"
+                                }
+                            },
+                            {
+                                "id": "3",
+                                "label": {
+                                    "en": "Set"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "permissions": [
+    ],
+    "speech": [
+    ],
+    "dependencies": {
+        "spc-api": "*",
+        "http-digest-client": "*",
+        "ws": "*"
+    }
+}

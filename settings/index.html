@@ -1,0 +1,211 @@
+
+<!doctype html>
+<html>
+    <head>
+        <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+        <script type="text/javascript" src="/manager/webserver/assets/js/jquery.js"></script>
+    </head>
+    <body>
+        <h2 data-i18n="settings.title"></h2>
+        <fieldset>
+            <button id="areas_button" data-i18n="settings.button_areas"></button>
+            <button id="zones_button" style="margin-left:10px;" data-i18n="settings.button_zones"></button>
+            <button id="system_log_button" style="margin-left:10px;" data-i18n="settings.button_syslog"></button>
+        </fieldset>
+        <fieldset id='fieldset_areas' >
+            <legend data-i18n="settings.subtitle_areas"></legend>
+            <table style="width:50%;">
+                <thead>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Partset A Enabled</th>
+                    <th>Partset B Enabled</th>
+                </thead>
+                <tbody id='areas_table_body'>
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset id='fieldset_zones' >
+            <legend data-i18n="settings.subtitle_zones"></legend>
+            <table style="width:100%;">
+                <thead>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Area</th>
+                </thead>
+                <tbody id='zones_table_body'>
+                </tbody>
+            </table>
+        </fieldset>
+        <fieldset id='fieldset_syslog' >
+            <legend data-i18n="settings.subtitle_syslog"></legend>
+            <table>
+                <thead>
+                    <th style="width:20%;">Time</th>
+                    <th style="width:80%;">Text</th>
+                </thead>
+                <tbody id='system_log_table_body'>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <script type="text/javascript">
+            $('#fieldset_areas').hide();
+            $('#fieldset_zones').hide();
+            $('#fieldset_syslog').hide();
+           
+            var spcZoneTypes = {
+                "0": "Alarm",
+                "1": "Entry/Exit",
+                "2": "Exit Term",
+                "3": "Fire",
+                "4": "Fire Exit",
+                "5": "Line",
+                "6": "Panic",
+                "7": "Hold-up",
+                "8": "Tamper",
+                "9": "Technical",
+                "10": "Medical",
+                "11": "Keyarm",
+                "12": "Unknown",
+                "13": "Shunt",
+                "14": "X-shunt",
+                "15": "Fault",
+                "16": "Lock Superv",
+                "17": "Seismic",
+                "18": "All OK"
+            }
+
+            function getTimeStr(seconds) {
+                var d = new Date(seconds*1000);
+                var timestr = (d.getFullYear() + '-' +
+                       ('0' + (d.getMonth() + 1)).slice(-2) + '-' +
+                       ('0' + (d.getDate())).slice(-2) + ' ' +
+                       ('0' + (d.getHours())).slice(-2) + ':' +
+                       ('0' + (d.getMinutes())).slice(-2) + ':' +
+                       ('0' + (d.getSeconds())).slice(-2));
+
+                return timestr;
+            }
+
+            function onHomeyReady(Homey) {
+
+                // Tell Homey we're ready to be displayed
+                Homey.ready();
+
+                var areasButtonElement = document.getElementById('areas_button');
+                var zonesButtonElement = document.getElementById('zones_button');
+                var systemLogButtonElement = document.getElementById('system_log_button');
+
+                // Get global settings
+                Homey.get('spc_bridge_data', function( err, gw_data ) {
+                    if (err) return Homey.alert(__('settings.pairing_needed'));
+                });
+
+                areasButtonElement.addEventListener('click', function(e) {
+                    $('#fieldset_areas').hide();
+                    $('#fieldset_zones').hide();
+                    $('#fieldset_syslog').hide();
+                    $('#areas_table_body').empty();
+                    Homey.api('GET', '/getAreas/', null, function(err, result) {
+                        if (err) return Homey.alert(__('settings.pairing_needed'));
+                        if (result) {
+                            var d = JSON.parse(result);
+                            if (d.status = 'success' && d.data && d.data.area_status) {
+                                // Display Areas 
+                                var items = d.data.area_status;
+                                if (Array.isArray(items)) {
+                                    for (var i = 0; i < items.length; i++) {
+                                        var partset_a = items[i].partseta_enable == 1? 'Yes': 'No';
+                                        var partset_b = items[i].partsetb_enable == 1? 'Yes': 'No';
+                                        var newRow = $('<tr></tr>');
+                                        var newItem = $('<td>' + items[i].area_id + '</td>');
+                                        newItem.appendTo(newRow);
+                                        newItem = $('<td>' + items[i].area_name + '</td>');
+                                        newItem.appendTo(newRow);
+                                        newItem = $('<td>' + partset_a + '</td>');
+                                        newItem.appendTo(newRow);
+                                        newItem = $('<td>' + partset_b + '</td>');
+                                        newItem.appendTo(newRow);
+                                        newRow.appendTo('#areas_table_body');
+                                    }
+                                } else {
+                                    var partset_a = items.partseta_enable == 1? 'Yes': 'No';
+                                    var partset_b = items.partsetb_enable == 1? 'Yes': 'No';
+                                    var newRow = $('<tr></tr>');
+                                    var newItem = $('<td>' + items.area_id + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + items.area_name + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + partset_a + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + partset_b + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newRow.appendTo('#areas_table_body');
+                                }
+                            }
+                        }
+                        $('#fieldset_areas').show();
+                    });
+                });
+
+                zonesButtonElement.addEventListener('click', function(e) {
+                    $('#fieldset_areas').hide();
+                    $('#fieldset_zones').hide();
+                    $('#fieldset_syslog').hide();
+                    $('#zones_table_body').empty();
+                    Homey.api('GET', '/getZones/', null, function(err, result) {
+                        if (err) return Homey.alert(__('settings.pairing_needed'));
+                        if (result) {
+                            var d = JSON.parse(result);
+                            if (d.status = 'success' && d.data && d.data.zone_status) {
+                                // Display Areas 
+                                var items = d.data.zone_status;
+                                for (var i = 0; i < items.length; i++) {
+                                    var newRow = $('<tr></tr>');
+                                    var newItem = $('<td>' + items[i].zone_id + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + items[i].zone_name + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + spcZoneTypes[items[i].type] + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' +  items[i].area_name + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newRow.appendTo('#zones_table_body');
+                                }
+                            }
+                        }
+                        $('#fieldset_zones').show();
+                    });
+                });
+
+                systemLogButtonElement.addEventListener('click', function(e) {
+                    $('#fieldset_areas').hide();
+                    $('#fieldset_zones').hide();
+                    $('#fieldset_syslog').hide();
+                    $('#system_log_table_body').empty();
+                    Homey.api('GET', '/getPanels/', null, function(err, result) {
+                        if (err) return Homey.alert(__('settings.pairing_needed'));
+                        if (result) {
+                            var d = JSON.parse(result);
+                            if (d.status = 'success' && d.data && d.data.system_log_event) {
+                                // Display log items 
+                                var items = d.data.system_log_event;
+                                for (var i = items.length - 1; i >= 0; i--) {
+                                    var newRow = $('<tr></tr>');
+                                    var newItem = $('<td>' + getTimeStr(items[i].time) + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newItem = $('<td>' + items[i].text + '</td>');
+                                    newItem.appendTo(newRow);
+                                    newRow.appendTo('#system_log_table_body');
+                                }
+                            }
+                        }
+                        $('#fieldset_syslog').show();
+                    });
+                });
+            }
+        </script>
+    </body>
+</html>
