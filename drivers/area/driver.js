@@ -46,6 +46,36 @@ class AreaDriver extends Homey.Driver {
                 var mode = spc.getAreaValue(data.panel, data.area, 'arm_mode_value');
                 return Promise.resolve(Number(args.values) == Number(mode));
             })
+        
+        // Register flow actions
+        this._flowActionAreaMode = new Homey.FlowCardAction('area_mode_action')
+            .register()
+            .registerRunListener(function(args, state) {
+                var data = args.device.getData();
+                var mode = Number(args.values);
+                var command = null;
+                if (mode == 0) {
+                    command = 'unset';
+                } else if (mode == 1) {
+                    command = 'set_a';
+                } else if (mode == 2) {
+                    command = 'set_b';
+                } else if (mode == 3) {
+                    command = 'set';
+                }
+                if (command) {
+                    spc.setAreaArmMode(data.panel, data.area, command, function(err, success) {
+                        if (err) {
+                            return Promise.resolve(false);
+                        } else {
+                            return Promise.resolve(true);
+                        }
+                    });
+                } else {
+                    return Promise.resolve(false);
+                }
+            })
+
     }
     // Flow triggers
     triggerAreaAlarmOn(device, tokens, state) {

@@ -48,6 +48,35 @@ class SpcDriver extends Homey.Driver {
                 return Promise.resolve(Number(args.values) == Number(mode));
             })
 
+        // Register flow actions
+        this._flowActionPanelMode = new Homey.FlowCardAction('panel_mode_action')
+            .register()
+            .registerRunListener(function(args, state) {
+                var data = args.device.getData();
+                var mode = Number(args.values);
+                var command = null;
+                if (mode == 0) {
+                    command = 'unset';
+                } else if (mode == 1) {
+                    command = 'set_a';
+                } else if (mode == 2) {
+                    command = 'set_b';
+                } else if (mode == 3) {
+                    command = 'set';
+                }
+                if (command) {
+                    spc.setPanelArmMode(data.id, command, function(err, success) {
+                        if (err) {
+                            return Promise.resolve(false);
+                        } else {
+                            return Promise.resolve(true);
+                        }
+                    });
+                } else {
+                    return Promise.resolve(false);
+                }
+            })
+
     }
     // Flow triggers
     triggerPanelAlarmOn(device, tokens, state) {
