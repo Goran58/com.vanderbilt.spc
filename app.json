@@ -7,7 +7,7 @@
     "tags": {
         "en": ["Vanderbilt SPC Intrusion Detection System Alarm Security"]
     },
-    "version": "1.0.2",
+    "version": "1.0.3",
     "compatibility": ">=1.0.0",
     "description": {
         "en": "Integrates Vanderbilt SPC Intrusion Detection System with Homey"

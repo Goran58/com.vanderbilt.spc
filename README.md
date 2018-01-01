@@ -113,4 +113,5 @@ If you select the App in the Settings menu on Homey Settings screen you will see
 ### Version history
 * 1.0.1 First public version
 * 1.0.2 Fixed - Unable to change area mode from flow actions
+* 1.0.3 Fixed - Improved connection reestablishment to SPC Bridge after network drops
 
