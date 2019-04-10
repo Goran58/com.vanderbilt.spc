@@ -13,18 +13,38 @@ class SpcDevice extends Homey.Device {
 
         this.setCapabilityValue('arm_mode', spc.getPanelValue(self.getData().panel, 'arm_mode'));
         this.setCapabilityValue('alarm', spc.getAreaValue(self.getData().panel, 'alarm'));
+        this.setCapabilityValue('alarm_unset', false);
+        this.setCapabilityValue('alarm_fullset', false);
+        this.setCapabilityValue('alarm_partset_a', false);
+        this.setCapabilityValue('alarm_partset_b', false);
 
         //  Capability listener
         this.registerMultipleCapabilityListener(['alarm_unset', 'alarm_fullset', 'alarm_partset_a', 'alarm_partset_b'], function(valueObj, optsObj) {
              var command = null;
              if (valueObj.alarm_unset) {
                  command = 'unset';
+                 self.setCapabilityValue('alarm_unset', true);
+                 self.setCapabilityValue('alarm_fullset', false);
+                 self.setCapabilityValue('alarm_partset_a', false);
+                 self.setCapabilityValue('alarm_partset_b', false);
              } else if (valueObj.alarm_fullset) {
                  command = 'set';
+                 self.setCapabilityValue('alarm_unset', false);
+                 self.setCapabilityValue('alarm_fullset', true);
+                 self.setCapabilityValue('alarm_partset_a', false);
+                 self.setCapabilityValue('alarm_partset_b', false);
              } else if (valueObj.alarm_partset_a) {
                  command = 'set_a';
+                 self.setCapabilityValue('alarm_unset', false);
+                 self.setCapabilityValue('alarm_fullset', false);
+                 self.setCapabilityValue('alarm_partset_a', true);
+                 self.setCapabilityValue('alarm_partset_b', false);
              } else if (valueObj.alarm_partset_b) {
                  command = 'set_b';
+                 self.setCapabilityValue('alarm_unset', false);
+                 self.setCapabilityValue('alarm_fullset', false);
+                 self.setCapabilityValue('alarm_partset_a', false);
+                 self.setCapabilityValue('alarm_partset_b', true);
              }
              if (command) {
                  spc.setPanelArmMode(self.getData().id, command, function(err, success) {

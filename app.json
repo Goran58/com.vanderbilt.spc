@@ -7,8 +7,8 @@
     "tags": {
         "en": ["Vanderbilt SPC Intrusion Detection System Alarm Security"]
     },
-    "version": "1.0.3",
-    "compatibility": ">=1.0.0",
+    "version": "1.0.4",
+    "compatibility": ">=2.0.0",
     "description": {
         "en": "Integrates Vanderbilt SPC Intrusion Detection System with Homey"
     },
@@ -60,7 +60,8 @@
                 "en": "Arm mode"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./drivers/spc/assets/arm_mode.svg"
         },
         "alarm": {
             "type": "boolean",
@@ -68,7 +69,8 @@
                 "en": "Alarm"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./drivers/spc/assets/alarm.svg"
         },
         "zone_alarm": {
             "type": "boolean",
@@ -76,7 +78,8 @@
                 "en": "Zone alarm"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./drivers/spc/assets/alarm.svg"
         },
         "zone_state": {
             "type": "string",
@@ -84,7 +87,8 @@
                 "en": "Input state"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./drivers/spc/assets/zone_state.svg"
         },
         "zone_status": {
             "type": "string",
@@ -92,7 +96,8 @@
                 "en": "Input status"
             },
             "getable": true,
-            "setable": false
+            "setable": false,
+            "icon": "./drivers/spc/assets/zone_status.svg"
         }
     },
     "drivers": [{

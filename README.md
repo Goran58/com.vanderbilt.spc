@@ -111,7 +111,14 @@ To sync the app with changes you have made in SPC configuration e.g added or rem
 If you select the App in the Settings menu on Homey Settings screen you will see buttons for listing areas, zones and the latest SPC systemlog events. The information is requested directly from the SPC panel. To be able to use this buttons it is mandatory that you first have added the Panel device. 
 
 ### Version history
-* 1.0.1 First public version
-* 1.0.2 Fixed - Unable to change area mode from flow actions
-* 1.0.3 Fixed - Improved connection reestablishment to SPC Bridge after network drops
+#### V1.0.4
+* Fixed - Adapted icons to Homey version 2.0 format
+* Fixed - App only working correctly when Homey language was set to English
+* Improvement - Improved initialisation of values at App start
+#### V1.0.3
+* Fixed - Improved connection reestablishment to SPC Bridge after network drops
+#### V1.0.2
+* Fixed - Unable to change area mode from flow actions
+#### V1.0.1
+* First public version
 

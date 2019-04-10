@@ -11,7 +11,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 const spc = require('spc-api');
 const Homey = require('homey');
-const locale = Homey.ManagerI18n.getLanguage(); 
+//const locale = Homey.ManagerI18n.getLanguage(); 
 
 // Start of the app
 class SpcApp extends Homey.App {
